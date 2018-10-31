@@ -15,23 +15,39 @@ bloco = {
     largura: 50,
     cor: "darkred",
     y: 10,
-    gravidade: 1.5,
+    gravidade: .4,
     velocidade: 0,
-    
+    forca: 7,
+    inerciaY: false,
+    pula: function() {
+        if(this.inerciaY) {
+            this.y -= 10;
+        }
+        if(this.y - this.altura > 0) {
+            this.velocidade -= this.forca;
+        }else{
+            this.y = 0;
+        }
+    },
     atualiza: function() {
-        this.velocidade += this.gravidade;
-        this.y += this.velocidade;
+        if(this.y + this.altura < 550) {
+            this.velocidade += this.gravidade;
+            this.y += this.velocidade;
+        }else {
+            this.velocidade = 0;
+            this.inerciaY = true;
+            // console.log('Desabou!');
+        }
     },
     desenha: function() {
         ctx.fillStyle = this.cor;
         ctx.fillRect(50, this.y, this.largura, this.altura);
-    }
+    },
 }
 
 function main() {
     ALTURA = window.innerHeight;
     LARGURA = window.innerWidth;
-    let atualizaY = (bloco.velocidade+bloco.gravidade);
 
     if(LARGURA >= 500) {
         LARGURA = 600;
@@ -47,6 +63,7 @@ function main() {
     document.body.appendChild(canvas);
     document.addEventListener("mousedown", function clique(event) {
         event.preventDefault();
+        bloco.pula();
     });
 
     roda();
